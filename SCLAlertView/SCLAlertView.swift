@@ -296,6 +296,8 @@ open class SCLAlertView: UIViewController {
     
     // UI Options
     open var iconTintColor: UIColor?
+    open var iconBackgroundImageTintColor: UIColor?
+
     open var customSubview : UIView?
     
     // Members declaration
@@ -693,7 +695,7 @@ open class SCLAlertView: UIViewController {
     
     // showCustom(view, title, subTitle, UIColor, UIImage)
     @discardableResult
-    open func showCustom(_ title: String, subTitle: String? = nil, color: UIColor, closeButtonTitle:String?=nil, timeout:SCLTimeoutConfiguration?=nil, colorTextButton: UInt=0xFFFFFF, circleIconImage: UIImage? = nil, animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
+    open func showCustom(_ title: String, subTitle: String? = nil, color: UIColor, closeButtonTitle:String?=nil, timeout:SCLTimeoutConfiguration?=nil, colorTextButton: UInt=0xFFFFFF, circleIconImage: UIImage? = nil, circleBackgoundImage: UIImage? = nil, animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         
         color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
@@ -705,7 +707,7 @@ open class SCLAlertView: UIViewController {
         
         let colorAsUInt = UInt(colorAsUInt32)
         
-        return showTitle(title, subTitle: subTitle, timeout: timeout, completeText:closeButtonTitle, style: .success, colorStyle: colorAsUInt, colorTextButton: colorTextButton, circleIconImage: circleIconImage, animationStyle: animationStyle)
+        return showTitle(title, subTitle: subTitle, timeout: timeout, completeText:closeButtonTitle, style: .success, colorStyle: colorAsUInt, colorTextButton: colorTextButton, circleIconImage: circleIconImage,circleBackgroundImage: circleBackgoundImage, animationStyle: animationStyle)
     }
     
     // showSuccess(view, title, subTitle)
@@ -758,7 +760,7 @@ open class SCLAlertView: UIViewController {
     
     // showTitle(view, title, subTitle, timeout, style)
     @discardableResult
-    open func showTitle(_ title: String, subTitle: String? = nil, timeout: SCLTimeoutConfiguration?, completeText: String?, style: SCLAlertViewStyle, colorStyle: UInt?=0x000000, colorTextButton: UInt?=0xFFFFFF, circleIconImage: UIImage? = nil, animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
+    open func showTitle(_ title: String, subTitle: String? = nil, timeout: SCLTimeoutConfiguration?, completeText: String?, style: SCLAlertViewStyle, colorStyle: UInt?=0x000000, colorTextButton: UInt?=0xFFFFFF, circleIconImage: UIImage? = nil,circleBackgroundImage: UIImage? = nil, animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
         selfReference = self
         view.alpha = 0
         view.tag = uniqueTag
@@ -858,6 +860,20 @@ open class SCLAlertView: UIViewController {
             }
             else {
                 circleIconView = UIImageView(image: iconImage!)
+                circleIconView?.backgroundColor = .clear
+            }
+            if let backgroundCircleImage = circleBackgroundImage {
+                let frame = circleView.frame
+                if let iconTintColor = iconTintColor {
+                    circleView = UIImageView(image: iconImage!.withRenderingMode(.alwaysTemplate))
+                    circleView.tintColor = iconTintColor
+                }
+                else {
+                    circleView.backgroundColor = .clear
+                    circleView = UIImageView(image: backgroundCircleImage)
+                }
+                circleView.frame = frame
+                circleBG.addSubview(circleView)
             }
         }
         circleView.addSubview(circleIconView!)
